@@ -32,25 +32,17 @@ export class ConnectStack extends cdk.Stack {
     const envName = config.envName;
 
     // -------------------------------------------------------------------------
-    // 3.1 Amazon Connect instance
+    // 3.1 Amazon Connect instance — import existing instance
+    // The instance was created manually (alias: debt-negotiator-dev).
+    // We import it by ARN so dependent resources (hours of op, queue, flow)
+    // are created inside the correct instance.
     // Requirements: 9.7
     // -------------------------------------------------------------------------
-    const connectInstance = new connect.CfnInstance(this, 'ConnectInstance', {
-      identityManagementType: 'CONNECT_MANAGED',
-      instanceAlias: `debt-negotiator-${envName}`,
-      attributes: {
-        inboundCalls: true,
-        outboundCalls: true,
-        contactflowLogs: true,
-        contactLens: true,
-        autoResolveBestVoices: true,
-        useCustomTtsVoices: false,
-        earlyMedia: true,
-      },
-    });
+    const INSTANCE_ID = 'feb464e6-13bf-42c0-af7c-d3e9293cac17';
+    const INSTANCE_ARN = `arn:aws:connect:us-east-1:855676085285:instance/${INSTANCE_ID}`;
 
-    this.connectInstanceArn = connectInstance.attrArn;
-    this.connectInstanceId = connectInstance.attrId;
+    this.connectInstanceArn = INSTANCE_ARN;
+    this.connectInstanceId = INSTANCE_ID;
 
     // -------------------------------------------------------------------------
     // 3.1 Hours of operation — Mon-Fri 8am-8pm EST
@@ -69,7 +61,7 @@ export class ConnectStack extends cdk.Stack {
     }));
 
     const hoursOfOperation = new connect.CfnHoursOfOperation(this, 'BusinessHours', {
-      instanceArn: connectInstance.attrArn,
+      instanceArn: INSTANCE_ARN,
       name: `BusinessHours-${envName}`,
       description: 'Standard business hours Mon-Fri 8am-8pm EST',
       timeZone: 'America/New_York',
@@ -83,7 +75,7 @@ export class ConnectStack extends cdk.Stack {
     // Requirements: 9.7
     // -------------------------------------------------------------------------
     const phoneNumber = new connect.CfnPhoneNumber(this, 'TollFreeNumber', {
-      targetArn: connectInstance.attrArn,
+      targetArn: INSTANCE_ARN,
       type: 'TOLL_FREE',
       countryCode: 'US',
       description: `Debt negotiator toll-free number (${envName})`,
@@ -93,10 +85,6 @@ export class ConnectStack extends cdk.Stack {
     // 3.2 Apply resource tags to all Connect resources
     // Requirements: 10.6
     // -------------------------------------------------------------------------
-    cdk.Tags.of(connectInstance).add('environment', envName);
-    cdk.Tags.of(connectInstance).add('project', 'autonomous-debt-negotiator');
-    cdk.Tags.of(connectInstance).add('cost-center', 'collections-ai');
-
     cdk.Tags.of(hoursOfOperation).add('environment', envName);
     cdk.Tags.of(hoursOfOperation).add('project', 'autonomous-debt-negotiator');
     cdk.Tags.of(hoursOfOperation).add('cost-center', 'collections-ai');
