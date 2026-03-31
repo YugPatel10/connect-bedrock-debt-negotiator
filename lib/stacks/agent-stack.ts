@@ -390,11 +390,33 @@ export class AgentStack extends cdk.Stack {
       ],
     });
 
-    // CfnBotAlias
+    // Create a bot version from the DRAFT
+    const cfnBotVersion = new lex.CfnBotVersion(this, 'DebtNegotiatorGreetingBotVersion', {
+      botId: cfnBot.attrId,
+      botVersionLocaleSpecification: [
+        {
+          localeId: 'en_US',
+          botVersionLocaleDetails: {
+            sourceBotVersion: 'DRAFT',
+          },
+        },
+      ],
+    });
+    cfnBotVersion.addDependency(cfnBot);
+
+    // CfnBotAlias pointing to the versioned bot
     const cfnBotAlias = new lex.CfnBotAlias(this, 'DebtNegotiatorGreetingBotAlias', {
       botId: cfnBot.attrId,
       botAliasName: `live-${props.config.envName}`,
-      botVersion: 'DRAFT',
+      botVersion: cfnBotVersion.attrBotVersion,
+      botAliasLocaleSettings: [
+        {
+          localeId: 'en_US',
+          botAliasLocaleSetting: {
+            enabled: true,
+          },
+        },
+      ],
     });
     cfnBotAlias.addDependency(cfnBot);
 

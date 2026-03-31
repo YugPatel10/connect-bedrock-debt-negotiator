@@ -8,7 +8,7 @@
  * Requirements: 8.2
  */
 
-import { S3Client, ListObjectsV2Command, GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, ListObjectsV2Command, GetObjectCommand, PutObjectCommand, _Object } from '@aws-sdk/client-s3';
 import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';
 import { BatchMetrics } from '../../../lib/types.js';
 
@@ -38,9 +38,9 @@ export const handler = async (event: BatchMetrics): Promise<SummarizePatternsOut
   );
 
   const transcriptKeys = (listResult.Contents ?? [])
-    .filter((obj) => obj.Key?.endsWith('/transcript.json'))
+    .filter((obj: _Object) => obj.Key?.endsWith('/transcript.json'))
     .slice(0, MAX_TRANSCRIPTS)
-    .map((obj) => obj.Key!);
+    .map((obj: _Object) => obj.Key!);
 
   // Read transcript content
   const transcripts: string[] = [];

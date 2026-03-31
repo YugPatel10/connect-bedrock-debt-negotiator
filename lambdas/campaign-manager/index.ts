@@ -57,7 +57,7 @@ export const handler = async (event: CampaignBatchRequest): Promise<DialAttemptR
   }
 
   const now = new Date().toISOString();
-  const expirationTime = new Date(Date.now() + retryWindowMinutes * 60 * 1000).toISOString();
+  const expirationTime = new Date(Date.now() + retryWindowMinutes * 60 * 1000);
   const results: DialAttemptResult[] = [];
 
   // -------------------------------------------------------------------------

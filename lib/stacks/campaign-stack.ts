@@ -68,8 +68,9 @@ export class CampaignStack extends cdk.Stack {
         },
       },
       outboundCallConfig: {
-        connectContactFlowArn: `arn:aws:connect:${this.region}:${this.account}:instance/PLACEHOLDER/contact-flow/PLACEHOLDER`,
+        connectContactFlowArn: `arn:aws:connect:us-east-1:855676085285:instance/feb464e6-13bf-42c0-af7c-d3e9293cac17/contact-flow/e7bf2eee-80c5-4a6f-b933-e9a8cdfdf724`,
         connectQueueArn: campaignQueue.attrQueueArn,
+        connectSourcePhoneNumber: '+18559535825',
       },
     });
 
