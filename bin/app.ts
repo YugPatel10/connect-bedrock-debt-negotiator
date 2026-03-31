@@ -55,7 +55,15 @@ const campaignStack = new CampaignStack(app, `DebtNegotiator-CampaignStack-${env
   connectStack,
 });
 
-// ConversationStack depends on ConnectStack, AgentStack, and DataStack
+// OptimizationStack depends on DataStack
+const optimizationStack = new OptimizationStack(app, `DebtNegotiator-OptimizationStack-${envName}`, {
+  env,
+  config,
+  tags,
+  dataStack,
+});
+
+// ConversationStack depends on ConnectStack, AgentStack, DataStack, and OptimizationStack
 const conversationStack = new ConversationStack(app, `DebtNegotiator-ConversationStack-${envName}`, {
   env,
   config,
@@ -63,14 +71,7 @@ const conversationStack = new ConversationStack(app, `DebtNegotiator-Conversatio
   connectStack,
   agentStack,
   dataStack,
-});
-
-// OptimizationStack depends on DataStack
-const optimizationStack = new OptimizationStack(app, `DebtNegotiator-OptimizationStack-${envName}`, {
-  env,
-  config,
-  tags,
-  dataStack,
+  optimizationStateMachineArn: optimizationStack.stateMachineArn,
 });
 
 // Suppress unused variable warnings for stacks that are wired but not yet fully implemented
