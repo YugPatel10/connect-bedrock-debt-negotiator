@@ -23,6 +23,7 @@ export interface ConnectStackProps extends cdk.StackProps {
 export class ConnectStack extends cdk.Stack {
   public readonly connectInstanceArn: string;
   public readonly connectInstanceId: string;
+  public readonly hoursOfOperationArn: string;
 
   constructor(scope: Construct, id: string, props: ConnectStackProps) {
     super(scope, id, props);
@@ -74,6 +75,8 @@ export class ConnectStack extends cdk.Stack {
       timeZone: 'America/New_York',
       config: businessDays,
     });
+
+    this.hoursOfOperationArn = hoursOfOperation.attrHoursOfOperationArn;
 
     // -------------------------------------------------------------------------
     // 3.1 Phone number — US toll-free in us-east-1
