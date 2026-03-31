@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib';
-import { getEnvironmentConfig } from '../lib/config';
-import { DataStack } from '../lib/stacks/data-stack';
-import { ConnectStack } from '../lib/stacks/connect-stack';
-import { AgentStack } from '../lib/stacks/agent-stack';
-import { CampaignStack } from '../lib/stacks/campaign-stack';
-import { ConversationStack } from '../lib/stacks/conversation-stack';
-import { OptimizationStack } from '../lib/stacks/optimization-stack';
+import { getEnvironmentConfig } from '../lib/config.js';
+import { DataStack } from '../lib/stacks/data-stack.js';
+import { ConnectStack } from '../lib/stacks/connect-stack.js';
+import { AgentStack } from '../lib/stacks/agent-stack.js';
+import { CampaignStack } from '../lib/stacks/campaign-stack.js';
+import { ConversationStack } from '../lib/stacks/conversation-stack.js';
+import { OptimizationStack } from '../lib/stacks/optimization-stack.js';
 
 const app = new cdk.App();
 
@@ -47,12 +47,13 @@ const agentStack = new AgentStack(app, `DebtNegotiator-AgentStack-${envName}`, {
   dataStack,
 });
 
-// CampaignStack depends on ConnectStack
+// CampaignStack depends on ConnectStack and DataStack
 const campaignStack = new CampaignStack(app, `DebtNegotiator-CampaignStack-${envName}`, {
   env,
   config,
   tags,
   connectStack,
+  dataStack,
 });
 
 // OptimizationStack depends on DataStack

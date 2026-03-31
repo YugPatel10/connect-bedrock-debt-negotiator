@@ -147,6 +147,11 @@ export class AgentStack extends cdk.Stack {
       actions: ['sns:Publish'],
       resources: [`arn:aws:sns:${this.region}:${this.account}:debt-negotiator-confirmations-${props.config.envName}`],
     }));
+    // SES requires '*' as the resource — SES does not support resource-level
+    // permissions scoped to individual verified identity ARNs in all regions,
+    // and the sending identity (email address or domain) is configured at
+    // runtime via SES_FROM_ADDRESS. Least-privilege is enforced by limiting
+    // actions to SendEmail/SendRawEmail only (no ses:CreateIdentity etc.).
     this.sendConfirmationFn.addToRolePolicy(new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       actions: ['ses:SendEmail', 'ses:SendRawEmail'],
